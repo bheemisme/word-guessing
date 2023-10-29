@@ -77,10 +77,12 @@ class GameBoard(QWidget):
 
     def validate_word(self):
         try:
-            if self.game.getCurrentWord() == self.input_holder.getWord():
+            word, _ = self.game.getCurrentWord()
+            print(word, self.game.currentIndex)
+            if word == self.input_holder.getWord():
                 self.info_label.setText("matched")
                 self.info_label.setStyleSheet("color: green; font-size: 30px;")
-                self.game.guess(1)
+                self.game.guess()
             else:
                 self.info_label.setText("invalid")
                 self.info_label.setStyleSheet("color: red; font-size: 30px;")
@@ -107,6 +109,7 @@ class GameBoard(QWidget):
             self.info_label.setText(f'Word No: {self.game.currentIndex + 1}')
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
         except (NoGameException, NoWordsException):
+            print(self.game.scores)
             self.info_label.setText(f'Score: {self.game.getScore()}')
             self.input_holder.renderWord("FINISHED", [1] * len("FINISHED"))
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")

@@ -11,7 +11,7 @@ import math
 class Game():
     def __init__(self, words: list[str]) -> None:
         self.words = words
-        self.scores: list[int] = [0]*len(words)
+        self.scores: list[int] = []
         self.isRunning = False
         self.currentIndex = 0
         self.reveals = []
@@ -19,6 +19,8 @@ class Game():
     def start_game(self):
         if len(self.words) == 0:
             raise NoGameException()
+        
+        self.scores = [0] * len(self.words)
         self.isRunning = True
         self.currentIndex = -1
         
@@ -31,22 +33,22 @@ class Game():
             self.isRunning = False
             raise NoWordsException()
 
-        return self.words[self.currentIndex]
+        return self.words[self.currentIndex], self.reveals
 
-    def guess(self, g: int):
-        if self.isRunning:
+    def guess(self):
+        if not self.isRunning:
             raise NoGameException()
         if self.currentIndex >= len(self.words):
             self.isRunning = False
             raise NoWordsException()
 
-        self.scores[self.currentIndex] = g
+        self.scores[self.currentIndex] = 1
 
     def nextWord(self):
   
         self.currentIndex += 1
         num_reveals = 0
-        word = self.getCurrentWord()
+        word, _= self.getCurrentWord()
         self.reveals = []
         for i in range(len(word)):
             if num_reveals <= math.floor(len(word) / 2):
@@ -57,7 +59,7 @@ class Game():
         return word, self.reveals
 
     def getClue(self):
-        word = self.getCurrentWord()
+        word, _ = self.getCurrentWord()
         if sum(self.reveals) <= math.floor(len(word)/2):
             while True:
                 i = random.randint(0, len(word)-1)
@@ -71,7 +73,7 @@ class Game():
         return sum(self.scores)
 
     def revealWord(self):
-        word = self.getCurrentWord()
+        word, _ = self.getCurrentWord()
         self.reveals = [1] * len(word)
         return word, self.reveals
 
