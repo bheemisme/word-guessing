@@ -6,6 +6,8 @@ Project Name: Word Guessing
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PySide6.QtCore import Qt
+
+from .word import Word
 from .game import Game
 from .inputHolder import InputHolder
 from .errors import NoWordsException, NoGameException
@@ -67,9 +69,9 @@ class GameBoard(QWidget):
 
     def run_game(self):
         try:
-            word, reveals = self.game.start_game()
-            self.input_holder.renderWord(word, reveals)
-            self.info_label.setText(f'Word No: {self.game.currentIndex + 1}')
+            word = self.game.start_game()
+            self.input_holder.renderWord(word)
+            self.info_label.setText(f'{word.get_riddle()}')
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
         except NoGameException:
             self.info_label.setText("Some Error occurred")
@@ -77,9 +79,9 @@ class GameBoard(QWidget):
 
     def validate_word(self):
         try:
-            word, _ = self.game.getCurrentWord()
-            print(word, self.game.currentIndex)
-            if word == self.input_holder.getWord():
+            word = self.game.getCurrentWord()
+
+            if word.get_word() == self.input_holder.getWord():
                 self.info_label.setText("matched")
                 self.info_label.setStyleSheet("color: green; font-size: 30px;")
                 self.game.guess()
@@ -89,32 +91,35 @@ class GameBoard(QWidget):
             self.input_holder.freezeWord()
         except (NoGameException, NoWordsException):
             self.info_label.setText(f'No active game is running')
-            self.input_holder.renderWord("ERROR", [1] * len("ERROR"))
+            self.input_holder.renderWord(
+                Word("ERROR", "No active game is running", [1] * len("ERROR")))
             self.info_label.setStyleSheet("color: red; font-size: 30px;")
 
     def revealWord(self):
-        word, reveals = self.game.revealWord()
-        self.input_holder.renderWord(word, reveals)
+        word = self.game.revealWord()
+        self.input_holder.renderWord(word)
         self.input_holder.freezeWord()
 
     def getClue(self):
-        word, reveals = self.game.getClue()
-        self.input_holder.renderWord(word, reveals)
+        word = self.game.getClue()
+        self.input_holder.renderWord(word)
 
     def nextWord(self):
 
         try:
-            word, reveals = self.game.nextWord()
-            self.input_holder.renderWord(word, reveals)
-            self.info_label.setText(f'Word No: {self.game.currentIndex + 1}')
+            word = self.game.nextWord()
+            self.input_holder.renderWord(word)
+            self.info_label.setText(f'{word.get_riddle()}')
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
         except (NoGameException, NoWordsException):
             print(self.game.scores)
             self.info_label.setText(f'Score: {self.game.getScore()}')
-            self.input_holder.renderWord("FINISHED", [1] * len("FINISHED"))
+            self.input_holder.renderWord(
+                Word("FINISHED", "", [1] * len("FINISHED")))
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
 
     def quit_game(self):
         self.info_label.setText(f'Score: {self.game.getScore()}')
-        self.input_holder.renderWord("FINISHED", [1] * len("FINISHED"))
+        self.input_holder.renderWord(
+            Word("FINISHED", "", [1] * len("FINISHED")))
         self.info_label.setStyleSheet("color: blue; font-size: 30px;")

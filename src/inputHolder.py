@@ -6,19 +6,19 @@ Project Name: Word Guessing
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLineEdit, QHBoxLayout
-
+from .word import Word
 
 class InputHolder(QWidget):
     def __init__(self):
         super().__init__()
         self.hbox = QHBoxLayout()
-        self.renderWord("STARTGAME", [1] * len("STARTGAME"))
-
+        self.renderWord(Word("STARTGAME", "", [1] * len("STARTGAME")))
         self.setStyleSheet(
             '''
                 QLineEdit {
                     color: black;
                     text-transform: uppercase;
+                    outline: none;
                 }
             '''
         )
@@ -30,15 +30,15 @@ class InputHolder(QWidget):
             self.hbox.itemAt(i).widget().deleteLater()
 
     
-    def renderWord(self, word: str, reveals: list[int]):
+    def renderWord(self, word: Word):
         self.remove_all_widgets()
-        for i in range(len(word)):
+        for i in range(len(word.get_word())):
             lineEdit = QLineEdit()
             lineEdit.setFixedSize(50, 50)
-            j = reveals[i]
+            j = word.reveals[i]
 
             if j == 1:
-                lineEdit.setText(word[i])
+                lineEdit.setText(word.get_word()[i])
                 lineEdit.setReadOnly(True)
             else:
                 lineEdit.setText("")
@@ -48,6 +48,7 @@ class InputHolder(QWidget):
             font.setPointSize(16)
             lineEdit.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
             lineEdit.setFont(font)
+            
 
             lineEdit.setMaxLength(1)
 

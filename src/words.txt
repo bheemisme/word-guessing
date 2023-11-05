@@ -1,38 +1,21 @@
-EXAMINATION
-METHOD
-GOVERNMENT
-BOTTLE
-PROBLEM
-TEXTBOOK
-KETTLE
-BANANA
-TEMPERATURE
-INVESTMENT
-INTEREST
-DEPARTMENT
-PRODUCT
-DAUGHTER
-TEACHER
-PROFESSOR
-STUDENT
-ENGINEER
-DOCTOR
-COLLECTOR
-OFFICER
-FASTRACK
-CHENNAI
-HYDERABAD
-BANGLORE
-MUMBAI
-KOLKATA
-SURFEXCEL
-DELUXE
-STEAMER
-BIRYANI
-GROUNDNUT
-GULABJAMUN
-HUNDERED
-MOSQUITO
-TOILET
-BEDROOM
-SAMBAR
+EXAMINATION=This is the fear of a student
+METHOD=A systematic process to execute some work
+GOVERNMENT=An illusion on which people put faith
+MANGO=king of fruits
+TEACHER=One person students hate
+ENGINEER=No invention without him
+SCIENTIST=No discovery without him
+DOCTOR=That one who can save life
+COLLECTOR=Don't know what the job is but every one wants it
+CHENNAI=A city with a character
+HYDERABAD=No one leaves without eating biryani
+BANGLORE=Life ends in traffic
+MUMBAI=go to vada paav
+KOLKATA=First capital of British India
+SPONGE=What is full of holes but still holds water?
+FUTURE=What is always in front of you but can’t be seen?
+PROMISE=What can you break, even if you never pick it up or touch it?
+DARKNESS=The more there is, the less you see. What am I?
+CRANE=What bird do you associate with lifting weight?
+LIGHT=What can go through glass without breaking it?
+R=What is seen in the middle of March and April that can’t be seen at the beginning or end of either month?

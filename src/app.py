@@ -11,6 +11,7 @@ from .menuBar import MenuBar
 from .gameBoard import GameBoard
 from .game import Game
 from .gameSignal import GameSignal, SignalTypes
+from .word import Word
 import random
 
 class App(QMainWindow):
@@ -20,7 +21,7 @@ class App(QMainWindow):
 
         
         
-        self.words: list[str] = self.read_words('src/words.txt')
+        self.words: list[Word] = self.read_words('src/words.txt')
         self.game: Game = Game([])
         self.gameBoard: GameBoard = GameBoard(self.game)
         self.gameSignal = GameSignal(self.gameBoard)
@@ -40,11 +41,11 @@ class App(QMainWindow):
         words = []
         with open(path) as f:
             for line in f:
-                word = line.strip()
-                words.append(word)
+                word = line.split("=",1)
+                words.append(Word(word[0].strip(), word[1].strip()))
         return words
     
-    def pick_random_words(self) -> list[str]:
+    def pick_random_words(self) -> list[Word]:
         array_copy = self.words.copy()
         random.shuffle(array_copy)
         return array_copy[:10]
