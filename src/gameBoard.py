@@ -4,14 +4,14 @@ Class: Ist M.Sc Computer Science
 Project Name: Word Guessing
 """
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QLineEdit
 from PySide6.QtCore import Qt
 
 from .word import Word
 from .game import Game
 from .inputHolder import InputHolder
 from .errors import NoWordsException, NoGameException
-
+from .inputDialog import InputDialog
 
 class GameBoard(QWidget):
     def __init__(self, game: Game):
@@ -69,10 +69,18 @@ class GameBoard(QWidget):
 
     def run_game(self):
         try:
-            word = self.game.start_game()
-            self.input_holder.renderWord(word)
-            self.info_label.setText(f'{word.get_riddle()}')
-            self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+            # render in put dialog
+            ulg = InputDialog()
+            if ulg.exec():
+                i = ulg.findChild(QLineEdit)
+                if isinstance(i, QLineEdit):
+                    print(i.text())
+                # create a user entry
+                word = self.game.start_game()
+                self.input_holder.renderWord(word)
+                self.info_label.setText(f'{word.get_riddle()}')
+                self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+            
         except NoGameException:
             self.info_label.setText("Some Error occurred")
             self.info_label.setStyleSheet("color: red; font-size: 30px;")
@@ -112,14 +120,14 @@ class GameBoard(QWidget):
             self.info_label.setText(f'{word.get_riddle()}')
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
         except (NoGameException, NoWordsException):
-            print(self.game.scores)
             self.info_label.setText(f'Score: {self.game.getScore()}')
             self.input_holder.renderWord(
                 Word("FINISHED", "", [1] * len("FINISHED")))
             self.info_label.setStyleSheet("color: blue; font-size: 30px;")
 
     def quit_game(self):
-        self.info_label.setText(f'Score: {self.game.getScore()}')
-        self.input_holder.renderWord(
+        if self.game.isRunning:
+            self.info_label.setText(f'Score: {self.game.getScore()}')
+            self.input_holder.renderWord(
             Word("FINISHED", "", [1] * len("FINISHED")))
-        self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+            self.info_label.setStyleSheet("color: blue; font-size: 30px;")
