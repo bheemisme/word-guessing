@@ -30,4 +30,3 @@ class GameSignal(QObject):
         if sig == SignalTypes.QUIT_GAME:
             self.gameBoard.quit_game()
     
-

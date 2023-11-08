@@ -13,6 +13,7 @@ from .inputHolder import InputHolder
 from .errors import NoWordsException, NoGameException
 from .inputDialog import InputDialog
 
+
 class GameBoard(QWidget):
     def __init__(self, game: Game):
         super().__init__()
@@ -33,7 +34,12 @@ class GameBoard(QWidget):
         self.reveal_button = QPushButton("Reveal")
 
         # styling info_label
-        self.info_label.setStyleSheet("color: black; font-size: 30px;")
+        self.info_label.setStyleSheet(
+            '''
+                color: black; 
+                font-size: 30px;
+            '''
+        )
         self.info_label.setContentsMargins(50, 50, 50, 50)
 
         # button handlers
@@ -57,12 +63,9 @@ class GameBoard(QWidget):
         self.hbox.addWidget(self.next_button)
 
         # adding labels, input, buttons to vbox
-        self.vbox.addWidget(
-            self.info_label, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.vbox.addWidget(self.input_holder,
-                            alignment=Qt.AlignmentFlag.AlignCenter)
-        self.vbox.addWidget(
-            self.hwidget, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(self.info_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(self.input_holder,alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(self.hwidget, alignment=Qt.AlignmentFlag.AlignCenter)
         self.vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.setLayout(self.vbox)
@@ -74,16 +77,24 @@ class GameBoard(QWidget):
             if ulg.exec():
                 i = ulg.findChild(QLineEdit)
                 if isinstance(i, QLineEdit):
-                    print(i.text())
-                # create a user entry
-                word = self.game.start_game()
-                self.input_holder.renderWord(word)
-                self.info_label.setText(f'{word.get_riddle()}')
-                self.info_label.setStyleSheet("color: blue; font-size: 30px;")
-            
+                    # create a user entry
+                    word = self.game.start_game(i.text())
+                    self.input_holder.renderWord(word)
+                    self.info_label.setText(f'{word.get_riddle()}')
+                    self.info_label.setStyleSheet(
+                        '''
+                            color: black;
+                            font-size: 30px;
+                        '''
+                    )
         except NoGameException:
             self.info_label.setText("Some Error occurred")
-            self.info_label.setStyleSheet("color: red; font-size: 30px;")
+            self.info_label.setStyleSheet(
+                '''
+                    color: black; 
+                    font-size: 30px;
+                '''
+            )
 
     def validate_word(self):
         try:
@@ -113,21 +124,26 @@ class GameBoard(QWidget):
         self.input_holder.renderWord(word)
 
     def nextWord(self):
-
-        try:
-            word = self.game.nextWord()
-            self.input_holder.renderWord(word)
-            self.info_label.setText(f'{word.get_riddle()}')
-            self.info_label.setStyleSheet("color: blue; font-size: 30px;")
-        except (NoGameException, NoWordsException):
-            self.info_label.setText(f'Score: {self.game.getScore()}')
-            self.input_holder.renderWord(
-                Word("FINISHED", "", [1] * len("FINISHED")))
-            self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+        if self.game.isRunning:
+            try:
+                word = self.game.nextWord()
+                self.input_holder.renderWord(word)
+                self.info_label.setText(f'{word.get_riddle()}')
+                self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+            except (NoGameException, NoWordsException):
+                self.info_label.setText(f'Score: {self.game.quit_game()}')
+                self.input_holder.renderWord(
+                    Word("FINISHED", "", [1] * len("FINISHED")))
+                self.info_label.setStyleSheet("color: black; font-size: 30px;")
 
     def quit_game(self):
         if self.game.isRunning:
-            self.info_label.setText(f'Score: {self.game.getScore()}')
+            self.info_label.setText(f'Score: {self.game.quit_game()}')
             self.input_holder.renderWord(
-            Word("FINISHED", "", [1] * len("FINISHED")))
-            self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+                Word("FINISHED", "", [1] * len("FINISHED")))
+            self.info_label.setStyleSheet(
+                '''
+                    color: black;
+                    font-size: 30px;
+                '''
+            )

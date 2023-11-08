@@ -8,24 +8,35 @@ from .word import Word
 from .errors import NoGameException, NoWordsException
 import random
 import math
+from .user import User
 
 
 class Game():
     def __init__(self, words: list[Word]) -> None:
+        self.game_no = 0
         self.words = words
         self.scores: list[int] = []
         self.isRunning = False
         self.currentIndex = 0
-        
+        self.user: User = None  # type: ignore
 
-    def start_game(self) -> Word:
+    def start_game(self, user: str) -> Word:
         if len(self.words) == 0:
             raise NoGameException()
+
+        with open('data/history.txt', 'r') as f:
+            l = f.readlines()
+            if len(l) > 0:
+                self.game_no = int(l[-1].split(";")[0])+1
+            else:
+                self.game_no += 1
 
         self.scores = [0] * len(self.words)
         self.isRunning = True
         self.currentIndex = -1
 
+        self.user: User = User(user, self.game_no)
+        self.user.set_words(self.words)
         return self.nextWord()
 
     def getCurrentWord(self) -> Word:
@@ -83,4 +94,8 @@ class Game():
     def quit_game(self):
         self.currentIndex = len(self.words)
         self.isRunning = False
+        self.user.set_score(self.getScore())
+        with open("./data/history.txt", 'a+') as f:
+            f.write(repr(self.user))
+
         return self.getScore()

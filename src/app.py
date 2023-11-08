@@ -5,13 +5,14 @@ Project Name: Word Guessing
 """
 
 from typing import Optional
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QWidget, QLabel
 from PySide6.QtCore import Signal
 from .menuBar import MenuBar
 from .gameBoard import GameBoard
 from .game import Game
 from .gameSignal import GameSignal, SignalTypes
 from .word import Word
+from .historyDialog import HistoryDialog
 import random
 
 class App(QMainWindow):
@@ -19,12 +20,11 @@ class App(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        
-        
-        self.words: list[Word] = self.read_words('src/words.txt')
+        self.words: list[Word] = self.read_words('data/words.txt')
         self.game: Game = Game([])
         self.gameBoard: GameBoard = GameBoard(self.game)
         self.gameSignal = GameSignal(self.gameBoard)
+        
         self.setWindowTitle("Word Guessing")
         self.setMinimumSize(800, 500)
         self.setStyleSheet("background-color: white;")
@@ -33,6 +33,7 @@ class App(QMainWindow):
 
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
+        
 
         self.show()
 
@@ -61,3 +62,7 @@ class App(QMainWindow):
         self.game.isRunning = False
         self.gameSignal.signal.emit(SignalTypes.QUIT_GAME) 
         # emit a signal to gameboard to quit the game
+    
+    def history(self):
+        hd = HistoryDialog()
+        hd.exec()

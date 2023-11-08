@@ -17,3 +17,5 @@ class Word:
         if len(reveals) == len(self.word):
             self.reveals = reveals
 
+    def __str__(self) -> str:
+        return f'{self.word};{self.riddle}'

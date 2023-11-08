@@ -6,7 +6,7 @@ class InputDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("HELLO!")
+        self.setWindowTitle("New game")
 
         QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 
@@ -16,8 +16,15 @@ class InputDialog(QDialog):
 
         layout = QVBoxLayout()
         user_name = QLineEdit()
+
         message = QLabel("Enter user name")
         layout.addWidget(message)
         layout.addWidget(user_name)
         layout.addWidget(self.buttonBox)
+
+        self.setStyleSheet('''
+            background-color: white;
+            color: black;
+        ''')
+        self.setFixedWidth(350)
         self.setLayout(layout)

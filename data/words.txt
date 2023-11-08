@@ -18,4 +18,3 @@ PROMISE=What can you break, even if you never pick it up or touch it?
 DARKNESS=The more there is, the less you see. What am I?
 CRANE=What bird do you associate with lifting weight?
 LIGHT=What can go through glass without breaking it?
-R=What is seen in the middle of March and April that can’t be seen at the beginning or end of either month?

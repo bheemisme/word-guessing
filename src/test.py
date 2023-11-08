@@ -1,3 +1,4 @@
-with open("./words.txt", "r") as f:
-    line= f.readline()
-    print(line.split("=")[-1].strip())
+with open('data/history.txt', 'r') as f:
+    l = f.readlines()
+    if len(l) > 0:
+        print(int(l[-1].split(";")[0]))
