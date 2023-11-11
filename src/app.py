@@ -5,8 +5,9 @@ Project Name: Word Guessing
 """
 
 from typing import Optional
-from PySide6.QtWidgets import QMainWindow, QWidget, QLabel
+from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QSizePolicy
 from PySide6.QtCore import Signal
+
 from .menuBar import MenuBar
 from .gameBoard import GameBoard
 from .game import Game
@@ -24,7 +25,7 @@ class App(QMainWindow):
         self.game: Game = Game([])
         self.gameBoard: GameBoard = GameBoard(self.game)
         self.gameSignal = GameSignal(self.gameBoard)
-        
+    
         self.setWindowTitle("Word Guessing")
         self.setMinimumSize(800, 500)
         self.setStyleSheet("background-color: white;")
@@ -43,7 +44,8 @@ class App(QMainWindow):
         with open(path) as f:
             for line in f:
                 word = line.split("=",1)
-                words.append(Word(word[0].strip(), word[1].strip()))
+                if len(word) == 2:
+                    words.append(Word(word[0].strip(), word[1].strip()))
         return words
     
     def pick_random_words(self) -> list[Word]:

@@ -4,7 +4,7 @@ Class: Ist M.Sc Computer Science
 Project Name: Word Guessing
 """
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QLineEdit
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QLineEdit, QTableWidget, QTableWidgetItem, QSizePolicy
 from PySide6.QtCore import Qt
 
 from .word import Word
@@ -24,6 +24,7 @@ class GameBoard(QWidget):
         # initializing layouts
         self.vbox = QVBoxLayout()
         self.hbox = QHBoxLayout()
+        self.meta_box = QHBoxLayout()
 
         # initializing the required widgets
         self.input_holder = InputHolder()
@@ -32,8 +33,20 @@ class GameBoard(QWidget):
         self.clue_button = QPushButton("Clue")
         self.next_button = QPushButton("Next")
         self.reveal_button = QPushButton("Reveal")
+        self.user_label = QLabel("")
+        self.game_table = QTableWidget(0, 2, self)
 
+        self.game_table.setHorizontalHeaderLabels(["word", "status"])
+        # self.game_table.setStyleSheet("border: 2px solid #e8e8e8;")
+        
+        
         # styling info_label
+        self.user_label.setStyleSheet(
+            '''
+                color: black;
+                font-size: 24px;
+            '''
+        )
         self.info_label.setStyleSheet(
             '''
                 color: black; 
@@ -41,7 +54,7 @@ class GameBoard(QWidget):
             '''
         )
         self.info_label.setContentsMargins(50, 50, 50, 50)
-
+        
         # button handlers
         self.guess_button.clicked.connect(self.validate_word)
         self.reveal_button.clicked.connect(self.revealWord)
@@ -51,10 +64,23 @@ class GameBoard(QWidget):
         # creating buttons widget
         self.hwidget = QWidget()
         self.hwidget.setLayout(self.hbox)
-        self.hwidget.setStyleSheet('''
+        self.hwidget.setStyleSheet(
+            '''
                 color: black;
                 font-size: 20px;
-            ''')
+            '''
+        )
+
+        # meta widget
+        self.meta_widget = QWidget()
+        self.meta_widget.setLayout(self.meta_box)
+        self.meta_widget.setStyleSheet(
+            '''
+                color: black;
+                font-size: 20px;
+            '''
+        )
+        self.meta_widget.setMinimumWidth(self.width())
 
         # adding buttons to widgets
         self.hbox.addWidget(self.clue_button)
@@ -62,11 +88,22 @@ class GameBoard(QWidget):
         self.hbox.addWidget(self.guess_button)
         self.hbox.addWidget(self.next_button)
 
+        self.meta_box.addWidget(
+            self.user_label, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.meta_box.addWidget(
+            self.game_table, alignment=Qt.AlignmentFlag.AlignRight)
         # adding labels, input, buttons to vbox
-        self.vbox.addWidget(self.info_label, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.vbox.addWidget(self.input_holder,alignment=Qt.AlignmentFlag.AlignCenter)
-        self.vbox.addWidget(self.hwidget, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(
+            self.meta_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(
+            self.info_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(self.input_holder,
+                            alignment=Qt.AlignmentFlag.AlignCenter)
+        self.vbox.addWidget(
+            self.hwidget, alignment=Qt.AlignmentFlag.AlignCenter)
+
         self.vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.meta_widget.setContentsMargins(0, 0, 0, 150)
 
         self.setLayout(self.vbox)
 
@@ -79,6 +116,7 @@ class GameBoard(QWidget):
                 if isinstance(i, QLineEdit):
                     # create a user entry
                     word = self.game.start_game(i.text())
+                    self.user_label.setText(f'Player: {self.game.user.get_name()}')
                     self.input_holder.renderWord(word)
                     self.info_label.setText(f'{word.get_riddle()}')
                     self.info_label.setStyleSheet(
@@ -104,6 +142,8 @@ class GameBoard(QWidget):
                 self.info_label.setText("matched")
                 self.info_label.setStyleSheet("color: green; font-size: 30px;")
                 self.game.guess()
+                self.insert_into_table(word.get_word(), "matched")
+                self.guess_button.setDisabled(True)
             else:
                 self.info_label.setText("invalid")
                 self.info_label.setStyleSheet("color: red; font-size: 30px;")
@@ -118,6 +158,8 @@ class GameBoard(QWidget):
         word = self.game.revealWord()
         self.input_holder.renderWord(word)
         self.input_holder.freezeWord()
+        self.guess_button.setDisabled(True)
+        self.insert_into_table(word.get_word(), "revealed")
 
     def getClue(self):
         word = self.game.getClue()
@@ -126,15 +168,22 @@ class GameBoard(QWidget):
     def nextWord(self):
         if self.game.isRunning:
             try:
+                word = self.game.getCurrentWord()
+                row = self.game_table.rowCount()
+                last_row_item = self.game_table.itemAt(row-1, 0)
+                if (not last_row_item) or (last_row_item and last_row_item.text() != word.get_word()):
+                    self.insert_into_table(word.get_word(), "skipped")
                 word = self.game.nextWord()
                 self.input_holder.renderWord(word)
                 self.info_label.setText(f'{word.get_riddle()}')
-                self.info_label.setStyleSheet("color: blue; font-size: 30px;")
+                self.info_label.setStyleSheet("color: black; font-size: 30px;")
+                self.guess_button.setEnabled(True)
             except (NoGameException, NoWordsException):
                 self.info_label.setText(f'Score: {self.game.quit_game()}')
-                self.input_holder.renderWord(
-                    Word("FINISHED", "", [1] * len("FINISHED")))
+                self.input_holder.renderWord(Word("FINISHED", "", [1] * len("FINISHED")))
                 self.info_label.setStyleSheet("color: black; font-size: 30px;")
+                self.user_label.setText(
+                    f'Player: {self.game.user.get_name()}\nScore: {self.game.user.get_score()}')
 
     def quit_game(self):
         if self.game.isRunning:
@@ -147,3 +196,11 @@ class GameBoard(QWidget):
                     font-size: 30px;
                 '''
             )
+
+    def insert_into_table(self, word, status):
+        row = self.game_table.rowCount()
+        self.game_table.insertRow(row)
+        item1 = QTableWidgetItem(word)
+        item2 = QTableWidgetItem(status)
+        self.game_table.setItem(row, 0, item1)
+        self.game_table.setItem(row, 1, item2)

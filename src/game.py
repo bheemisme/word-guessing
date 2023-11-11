@@ -64,11 +64,12 @@ class Game():
         reveals = []
 
         for i in range(len(word.get_word())):
-            if num_reveals <= math.floor(len(word.get_word()) / 2):
-                reveals.append(random.randint(0, 1))
-                num_reveals = num_reveals + reveals[i]
-            else:
-                reveals.append(0)
+            reveals.append(0)
+            # if num_reveals <= math.floor(len(word.get_word()) / 2):
+            #     reveals.append(random.randint(0, 1))
+            #     num_reveals = num_reveals + reveals[i]
+            # else:
+            #     reveals.append(0)
         word.set_reveals(reveals)
         return word
 

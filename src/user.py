@@ -6,6 +6,9 @@ class User:
         self.score =  0
         self.game_no = game_no
     
+    def get_name(self):
+        return self.name
+
     def set_words(self, words):
         self.words = words
     
