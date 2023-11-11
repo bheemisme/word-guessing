@@ -25,13 +25,12 @@ class App(QMainWindow):
         self.game: Game = Game([])
         self.gameBoard: GameBoard = GameBoard(self.game)
         self.gameSignal = GameSignal(self.gameBoard)
-    
+        
         self.setWindowTitle("Word Guessing")
         self.setMinimumSize(800, 500)
         self.setStyleSheet("background-color: white;")
         self.setAutoFillBackground(True)
         self.setCentralWidget(self.gameBoard)
-
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
         

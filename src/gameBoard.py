@@ -33,20 +33,23 @@ class GameBoard(QWidget):
         self.clue_button = QPushButton("Clue")
         self.next_button = QPushButton("Next")
         self.reveal_button = QPushButton("Reveal")
-        self.user_label = QLabel("")
+        self.user_label = QLabel("  Hit the menu\nStart the game")
         self.game_table = QTableWidget(0, 2, self)
 
         self.game_table.setHorizontalHeaderLabels(["word", "status"])
         # self.game_table.setStyleSheet("border: 2px solid #e8e8e8;")
-        
-        
+
         # styling info_label
         self.user_label.setStyleSheet(
             '''
                 color: black;
-                font-size: 24px;
+                font-size: 18px;
+                border: 2px solid #e8e8e8;
+                
             '''
         )
+        self.user_label.setMinimumWidth(100)
+        self.user_label.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.info_label.setStyleSheet(
             '''
                 color: black; 
@@ -54,7 +57,9 @@ class GameBoard(QWidget):
             '''
         )
         self.info_label.setContentsMargins(50, 50, 50, 50)
-        
+        self.game_table.setColumnWidth(0,169)
+        self.game_table.setColumnWidth(1,129)
+        self.game_table.setMinimumWidth(300)
         # button handlers
         self.guess_button.clicked.connect(self.validate_word)
         self.reveal_button.clicked.connect(self.revealWord)
@@ -103,7 +108,7 @@ class GameBoard(QWidget):
             self.hwidget, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.meta_widget.setContentsMargins(0, 0, 0, 150)
+        self.meta_widget.setContentsMargins(0, 0, 0, 50)
 
         self.setLayout(self.vbox)
 
@@ -116,7 +121,8 @@ class GameBoard(QWidget):
                 if isinstance(i, QLineEdit):
                     # create a user entry
                     word = self.game.start_game(i.text())
-                    self.user_label.setText(f'Player: {self.game.user.get_name()}')
+                    self.user_label.setText(
+                        f'Player: {self.game.user.get_name()}')
                     self.input_holder.renderWord(word)
                     self.info_label.setText(f'{word.get_riddle()}')
                     self.info_label.setStyleSheet(
@@ -125,6 +131,9 @@ class GameBoard(QWidget):
                             font-size: 30px;
                         '''
                     )
+                self.guess_button.setEnabled(True)
+                self.reveal_button.setEnabled(True)
+                self.clue_button.setEnabled(True)
         except NoGameException:
             self.info_label.setText("Some Error occurred")
             self.info_label.setStyleSheet(
@@ -144,6 +153,8 @@ class GameBoard(QWidget):
                 self.game.guess()
                 self.insert_into_table(word.get_word(), "matched")
                 self.guess_button.setDisabled(True)
+                self.reveal_button.setDisabled(True)
+                self.clue_button.setDisabled(True)
             else:
                 self.info_label.setText("invalid")
                 self.info_label.setStyleSheet("color: red; font-size: 30px;")
@@ -159,11 +170,17 @@ class GameBoard(QWidget):
         self.input_holder.renderWord(word)
         self.input_holder.freezeWord()
         self.guess_button.setDisabled(True)
+        self.reveal_button.setDisabled(True)
+        self.clue_button.setDisabled(True)
         self.insert_into_table(word.get_word(), "revealed")
 
     def getClue(self):
         word = self.game.getClue()
-        self.input_holder.renderWord(word)
+        if self.game.getCurrentWord().get_reveals() != word.get_reveals():
+            self.input_holder.renderWord(word)
+        else:
+            self.clue_button.setDisabled(True)
+            
 
     def nextWord(self):
         if self.game.isRunning:
@@ -178,12 +195,18 @@ class GameBoard(QWidget):
                 self.info_label.setText(f'{word.get_riddle()}')
                 self.info_label.setStyleSheet("color: black; font-size: 30px;")
                 self.guess_button.setEnabled(True)
+                self.reveal_button.setEnabled(True)
+                self.clue_button.setEnabled(True)
             except (NoGameException, NoWordsException):
                 self.info_label.setText(f'Score: {self.game.quit_game()}')
-                self.input_holder.renderWord(Word("FINISHED", "", [1] * len("FINISHED")))
+                self.input_holder.renderWord(
+                    Word("FINISHED", "", [1] * len("FINISHED")))
                 self.info_label.setStyleSheet("color: black; font-size: 30px;")
                 self.user_label.setText(
                     f'Player: {self.game.user.get_name()}\nScore: {self.game.user.get_score()}')
+                self.guess_button.setDisabled(True)
+                self.reveal_button.setDisabled(True)
+                self.clue_button.setDisabled(True)
 
     def quit_game(self):
         if self.game.isRunning:
