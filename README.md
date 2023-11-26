@@ -1,8 +1,8 @@
 # Word Guessing game
 
-![home](images/home.png)
+![home](./app/images/home.png)
 
-![running](images/running.png)
+![running](./app/images/running.png)
 
 ## Libraries
 
