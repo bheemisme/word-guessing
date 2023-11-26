@@ -4,7 +4,7 @@ Class: Ist M.Sc Computer Science
 Project Name: Word Guessing
 """
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QLineEdit, QTableWidget, QTableWidgetItem, QSizePolicy
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QLineEdit, QTableWidget, QTableWidgetItem
 from PySide6.QtCore import Qt
 
 from .word import Word
@@ -36,7 +36,9 @@ class GameBoard(QWidget):
         self.user_label = QLabel("  Hit the menu\nStart the game")
         self.game_table = QTableWidget(0, 2, self)
 
+
         self.game_table.setHorizontalHeaderLabels(["word", "status"])
+        self.is_inserted = False
         # self.game_table.setStyleSheet("border: 2px solid #e8e8e8;")
 
         # styling info_label
@@ -134,6 +136,7 @@ class GameBoard(QWidget):
                 self.guess_button.setEnabled(True)
                 self.reveal_button.setEnabled(True)
                 self.clue_button.setEnabled(True)
+                
         except NoGameException:
             self.info_label.setText("Some Error occurred")
             self.info_label.setStyleSheet(
@@ -146,12 +149,12 @@ class GameBoard(QWidget):
     def validate_word(self):
         try:
             word = self.game.getCurrentWord()
-
             if word.get_word() == self.input_holder.getWord():
                 self.info_label.setText("matched")
                 self.info_label.setStyleSheet("color: green; font-size: 30px;")
                 self.game.guess()
                 self.insert_into_table(word.get_word(), "matched")
+                self.set_inserted(True)
                 self.guess_button.setDisabled(True)
                 self.reveal_button.setDisabled(True)
                 self.clue_button.setDisabled(True)
@@ -173,6 +176,7 @@ class GameBoard(QWidget):
         self.reveal_button.setDisabled(True)
         self.clue_button.setDisabled(True)
         self.insert_into_table(word.get_word(), "revealed")
+        self.set_inserted(True)
 
     def getClue(self):
         word = self.game.getClue()
@@ -183,13 +187,13 @@ class GameBoard(QWidget):
             
 
     def nextWord(self):
-        if self.game.isRunning:
+        if self.game.get_running():
             try:
                 word = self.game.getCurrentWord()
-                row = self.game_table.rowCount()
-                last_row_item = self.game_table.itemAt(row-1, 0)
-                if (not last_row_item) or (last_row_item and last_row_item.text() != word.get_word()):
+                if not self.get_inserted():
                     self.insert_into_table(word.get_word(), "skipped")
+                    
+                self.set_inserted(False)
                 word = self.game.nextWord()
                 self.input_holder.renderWord(word)
                 self.info_label.setText(f'{word.get_riddle()}')
@@ -209,7 +213,8 @@ class GameBoard(QWidget):
                 self.clue_button.setDisabled(True)
 
     def quit_game(self):
-        if self.game.isRunning:
+        
+        if self.game.get_running():
             self.info_label.setText(f'Score: {self.game.quit_game()}')
             self.input_holder.renderWord(
                 Word("FINISHED", "", [1] * len("FINISHED")))
@@ -227,3 +232,9 @@ class GameBoard(QWidget):
         item2 = QTableWidgetItem(status)
         self.game_table.setItem(row, 0, item1)
         self.game_table.setItem(row, 1, item2)
+    
+    def set_inserted(self,isInserted: bool):
+        self.is_inserted = isInserted
+    
+    def get_inserted(self) -> bool:
+        return self.is_inserted

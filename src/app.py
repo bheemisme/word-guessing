@@ -53,14 +53,11 @@ class App(QMainWindow):
         return array_copy[:10]
     
     def new_game(self):
-        
-        self.game.isRunning = True
         self.game.words = self.pick_random_words()
         self.gameSignal.signal.emit(SignalTypes.START_GAME)
         # emit a signal to gameboard, to listen
     
     def quit_game(self):
-        self.game.isRunning = False
         self.gameSignal.signal.emit(SignalTypes.QUIT_GAME) 
         # emit a signal to gameboard to quit the game
     

@@ -19,6 +19,18 @@ class Game():
         self.isRunning = False
         self.currentIndex = 0
         self.user: User = None  # type: ignore
+    
+    def set_running(self, isRunning: bool):
+        self.isRunning = isRunning
+    
+    def get_running(self) -> bool:
+        return self.isRunning
+    
+    def get_current_index(self) -> int:
+        return self.currentIndex
+    
+    def set_current_index(self, currentIndex: int):
+        self.currentIndex = currentIndex
 
     def start_game(self, user: str) -> Word:
         if len(self.words) == 0:
@@ -32,8 +44,8 @@ class Game():
                 self.game_no += 1
 
         self.scores = [0] * len(self.words)
-        self.isRunning = True
-        self.currentIndex = -1
+        self.set_running(True)
+        self.set_current_index(-1)
 
         self.user: User = User(user, self.game_no)
         self.user.set_words(self.words)
@@ -43,7 +55,7 @@ class Game():
         if not self.isRunning:
             raise NoGameException()
         if self.currentIndex >= len(self.words):
-            self.isRunning = False
+            self.set_running(False)
             raise NoWordsException()
 
         return self.words[self.currentIndex]
@@ -52,13 +64,13 @@ class Game():
         if not self.isRunning:
             raise NoGameException()
         if self.currentIndex >= len(self.words):
-            self.isRunning = False
+            self.set_running(True)
             raise NoWordsException()
 
         self.scores[self.currentIndex] = 1
 
     def nextWord(self) -> Word:
-        self.currentIndex += 1
+        self.set_current_index(self.get_current_index() +1)
         num_reveals = 0
         word = self.getCurrentWord()
         reveals = []
@@ -93,8 +105,8 @@ class Game():
         return word
 
     def quit_game(self):
-        self.currentIndex = len(self.words)
-        self.isRunning = False
+        self.set_current_index(len(self.words))
+        self.set_running(False)
         self.user.set_score(self.getScore())
         with open("./data/history.txt", 'a+') as f:
             f.write(repr(self.user))
