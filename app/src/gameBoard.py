@@ -218,6 +218,8 @@ class GameBoard(QWidget):
             self.info_label.setText(f'Score: {self.game.quit_game()}')
             self.input_holder.renderWord(
                 Word("FINISHED", "", [1] * len("FINISHED")))
+            self.user_label.setText(
+                    f'Player: {self.game.user.get_name()}\nScore: {self.game.user.get_score()}')
             self.info_label.setStyleSheet(
                 '''
                     color: black;

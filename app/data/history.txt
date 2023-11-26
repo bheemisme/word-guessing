@@ -8,3 +8,5 @@
 8;bheem;8
 9;bheem;0
 10;bheem;2
+11;bheem;0
+12;bheem;0
