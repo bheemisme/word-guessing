@@ -8,7 +8,6 @@
 
 - PySide6
 
-
 ## Instructions
 
 - run `build.sh` to produce an executable in `dist` directory
