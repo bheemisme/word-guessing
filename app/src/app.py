@@ -21,7 +21,7 @@ class App(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        self.words: list[Word] = self.read_words('data/words.txt')
+        self.words: list[Word] = self.read_words('./app/data/words.txt')
         self.game: Game = Game([])
         self.gameBoard: GameBoard = GameBoard(self.game)
         self.gameSignal = GameSignal(self.gameBoard)

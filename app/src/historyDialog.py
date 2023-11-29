@@ -19,7 +19,7 @@ class HistoryDialog(QDialog):
         layout.addWidget(tb)
         self.setLayout(layout)
 
-        with open('./data/history.txt') as f:
+        with open('./app/data/history.txt') as f:
             lines = f.readlines()
             tb.setRowCount(len(lines))
             for i in range(len(lines)):

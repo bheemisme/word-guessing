@@ -36,7 +36,7 @@ class Game():
         if len(self.words) == 0:
             raise NoGameException()
 
-        with open('data/history.txt', 'r') as f:
+        with open('./app/data/history.txt', 'r') as f:
             l = f.readlines()
             if len(l) > 0:
                 self.game_no = int(l[-1].split(";")[0])+1
@@ -108,7 +108,7 @@ class Game():
         self.set_current_index(len(self.words))
         self.set_running(False)
         self.user.set_score(self.getScore())
-        with open("./data/history.txt", 'a+') as f:
+        with open("./app/data/history.txt", 'a+') as f:
             f.write(repr(self.user))
 
         return self.getScore()
