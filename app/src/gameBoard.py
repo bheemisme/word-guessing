@@ -146,6 +146,10 @@ class GameBoard(QWidget):
             )
 
     def validate_word(self):
+        '''
+            guess button handler
+        '''
+
         try:
             word = self.game.getCurrentWord()
             if word.get_word() == self.input_holder.getWord():
@@ -168,6 +172,9 @@ class GameBoard(QWidget):
             self.info_label.setStyleSheet("color: red; font-size: 30px;")
 
     def revealWord(self):
+        '''
+            reveal button handler
+        '''
         word = self.game.revealWord()
         self.input_holder.renderWord(word)
         self.input_holder.freezeWord()
@@ -185,6 +192,9 @@ class GameBoard(QWidget):
             self.clue_button.setDisabled(True)
 
     def nextWord(self):
+        '''
+            next button handler
+        '''
         if self.game.get_running():
             try:
                 word = self.game.getCurrentWord()
@@ -199,6 +209,7 @@ class GameBoard(QWidget):
                 self.guess_button.setEnabled(True)
                 self.reveal_button.setEnabled(True)
                 self.clue_button.setEnabled(True)
+                self.next_button.setEnabled(True)
             except (NoGameException, NoWordsException):
                 self.info_label.setText(f'Score: {self.game.quit_game()}')
                 self.input_holder.renderWord(
@@ -209,6 +220,7 @@ class GameBoard(QWidget):
                 self.guess_button.setDisabled(True)
                 self.reveal_button.setDisabled(True)
                 self.clue_button.setDisabled(True)
+                self.next_button.setDisabled(True)
 
     def quit_game(self):
 
@@ -224,6 +236,10 @@ class GameBoard(QWidget):
                     font-size: 30px;
                 '''
             )
+            self.guess_button.setDisabled(True)
+            self.reveal_button.setDisabled(True)
+            self.clue_button.setDisabled(True)
+            self.next_button.setDisabled(True)
 
     def insert_into_table(self, word, status):
         row = self.game_table.rowCount()
