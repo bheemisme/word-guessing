@@ -36,7 +36,6 @@ class GameBoard(QWidget):
         self.user_label = QLabel("  Hit the menu\nStart the game")
         self.game_table = QTableWidget(0, 2, self)
 
-
         self.game_table.setHorizontalHeaderLabels(["word", "status"])
         self.is_inserted = False
         # self.game_table.setStyleSheet("border: 2px solid #e8e8e8;")
@@ -59,8 +58,8 @@ class GameBoard(QWidget):
             '''
         )
         self.info_label.setContentsMargins(50, 50, 50, 50)
-        self.game_table.setColumnWidth(0,169)
-        self.game_table.setColumnWidth(1,129)
+        self.game_table.setColumnWidth(0, 169)
+        self.game_table.setColumnWidth(1, 129)
         self.game_table.setMinimumWidth(300)
         # button handlers
         self.guess_button.clicked.connect(self.validate_word)
@@ -136,7 +135,7 @@ class GameBoard(QWidget):
                 self.guess_button.setEnabled(True)
                 self.reveal_button.setEnabled(True)
                 self.clue_button.setEnabled(True)
-                
+
         except NoGameException:
             self.info_label.setText("Some Error occurred")
             self.info_label.setStyleSheet(
@@ -184,7 +183,6 @@ class GameBoard(QWidget):
             self.input_holder.renderWord(word)
         else:
             self.clue_button.setDisabled(True)
-            
 
     def nextWord(self):
         if self.game.get_running():
@@ -192,7 +190,7 @@ class GameBoard(QWidget):
                 word = self.game.getCurrentWord()
                 if not self.get_inserted():
                     self.insert_into_table(word.get_word(), "skipped")
-                    
+
                 self.set_inserted(False)
                 word = self.game.nextWord()
                 self.input_holder.renderWord(word)
@@ -213,13 +211,13 @@ class GameBoard(QWidget):
                 self.clue_button.setDisabled(True)
 
     def quit_game(self):
-        
+
         if self.game.get_running():
             self.info_label.setText(f'Score: {self.game.quit_game()}')
             self.input_holder.renderWord(
                 Word("FINISHED", "", [1] * len("FINISHED")))
             self.user_label.setText(
-                    f'Player: {self.game.user.get_name()}\nScore: {self.game.user.get_score()}')
+                f'Player: {self.game.user.get_name()}\nScore: {self.game.user.get_score()}')
             self.info_label.setStyleSheet(
                 '''
                     color: black;
@@ -234,9 +232,9 @@ class GameBoard(QWidget):
         item2 = QTableWidgetItem(status)
         self.game_table.setItem(row, 0, item1)
         self.game_table.setItem(row, 1, item2)
-    
-    def set_inserted(self,isInserted: bool):
+
+    def set_inserted(self, isInserted: bool):
         self.is_inserted = isInserted
-    
+
     def get_inserted(self) -> bool:
         return self.is_inserted
