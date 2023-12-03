@@ -164,6 +164,13 @@ class GameBoard(QWidget):
             else:
                 self.info_label.setText("invalid")
                 self.info_label.setStyleSheet("color: red; font-size: 30px;")
+                self.insert_into_table(word.get_word(), "invalid")
+                self.set_inserted(True)
+                self.guess_button.setDisabled(True)
+                self.reveal_button.setDisabled(True)
+                self.clue_button.setDisabled(True)
+                
+
             self.input_holder.freezeWord()
         except (NoGameException, NoWordsException):
             self.info_label.setText(f'No active game is running')
@@ -185,8 +192,10 @@ class GameBoard(QWidget):
         self.set_inserted(True)
 
     def getClue(self):
+        current_reveals = self.game.getCurrentWord().get_reveals().copy()
         word = self.game.getClue()
-        if self.game.getCurrentWord().get_reveals() != word.get_reveals():
+        
+        if current_reveals != word.get_reveals():
             self.input_holder.renderWord(word)
         else:
             self.clue_button.setDisabled(True)
